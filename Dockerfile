@@ -1,20 +1,20 @@
 FROM golang:1.20-alpine AS builder
 
-WORKDIR /app
+WORKDIR /build
 
 COPY go.mod go.sum ./
 
-RUN go mod download
+RUN go mod tidy
 
 COPY . .
 
-RUN go build -o main .
+RUN go build -o /build/main ./cmd
 
 FROM alpine:latest
 
-WORKDIR /root/
+WORKDIR /app
 
-COPY --from=builder /app/main .
+COPY --from=builder /build/main .
 
 EXPOSE 3040
 
