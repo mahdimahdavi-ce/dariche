@@ -47,7 +47,8 @@ func main() {
 			fmt.Printf("Cache Miss for %s\n", name)
 		} else {
 			fmt.Printf("Cache Hit for %s\n", name)
-			return c.JSON(vulerabilities)
+			c.Set("Content-Type", "application/json")
+			return c.Send([]byte(vulerabilities))
 		}
 
 		zapLogger.Info("Start searching for vulneabilities ...")
@@ -58,8 +59,6 @@ func main() {
 			fmt.Printf("Failed to call FetchVulnerabilities rpc: %v \n", err)
 			return err
 		}
-
-		fmt.Println(len(res.Vulnerabilities))
 
 		if len(res.Vulnerabilities) > 0 {
 			ctx, cancel := context.WithTimeout(context.Background(), 7*time.Second)
