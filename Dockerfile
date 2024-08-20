@@ -1,6 +1,8 @@
-FROM golang:1.20-alpine AS builder
+FROM docker.arvancloud.ir/golang:1.22-alpine as build
 
 WORKDIR /build
+
+ENV GOPROXY=https://proxy.golang.org,direct
 
 COPY go.mod go.sum ./
 
@@ -10,11 +12,11 @@ COPY . .
 
 RUN go build -o /build/main ./cmd
 
-FROM alpine:latest
+FROM docker.arvancloud.ir/alpine:latest as runtime
 
 WORKDIR /app
 
-COPY --from=builder /build/main .
+COPY --from=build /build/main . 
 
 EXPOSE 3040
 

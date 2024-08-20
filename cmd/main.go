@@ -65,9 +65,12 @@ func main() {
 
 			val, err := json.Marshal(res.Vulnerabilities)
 			if err != nil {
-				fmt.Println("Failed to insert in cache")
+				fmt.Println("Failed to marshal data for inserting in cache")
 			} else {
-				redisClient.Set(ctx, name, val, 72*time.Hour)
+				status := redisClient.Set(ctx, name, val, 72*time.Hour)
+				if status.Err() != nil {
+					fmt.Printf("Failed to insert in cache - err: %s\n", status.Err().Error())
+				}
 				fmt.Printf("vulnerabilities are inserted in cache for %s\n", name)
 			}
 
